@@ -5,8 +5,7 @@ from models.employe_position import employee_positions
 
 class Employee(Base):
     __tablename__= "employees"
-    id = Column(Integer, autoincrement=True, primary_key=True)
-    position = relationship("Position",secondary=employee_positions,back_populates="employees")
+    id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     surname = Column(String(255), nullable=False)
     birth_date= Column(Date, nullable=False)
@@ -14,7 +13,7 @@ class Employee(Base):
     salary = Column(Float(8,2), nullable=False)
     start_date= Column(DateTime, nullable=False, default=func.now())
 
-    
+    position = relationship("Position",secondary=employee_positions,back_populates="employees")
     company = relationship("Company", back_populates="employees")
     
     def __repr__(self):
