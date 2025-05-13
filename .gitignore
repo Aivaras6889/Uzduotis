@@ -172,3 +172,10 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+#Files
+__init__.py
+imone.py
+main.py
+uzduotis.py
+Uzrasai/Uzrasai.txt
