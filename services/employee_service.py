@@ -31,48 +31,28 @@ def employee_insert():
     try:
         session = getSession()
         while True:
-            
-            print("Choice: ")
-            print("_1 to add new employee;")
-            print("_2 to add new company;")
-            print("_3 to add new position;")
-            print("_4 to return back;")
-            choice = int(input("Enter(1/4)"))
-            
-            if choice == 1:
-                name = input("Enter employee name: ")
-                surname = input("Enter employee surname: ")
-                birth_date= input("Enter birth date(xxxx/xx/xx): ")
-                salary = float(input("Enter employee Salary(x...x.xx): "))
-                company_id = int(input("Enter company ID: "))
-                company = session.get(Company, company_id)
-                if not company:
-                    print("Invalid company ID. Please try again.")
-                    continue
-
-                employee = Employee(name=name, surname=surname, birth_date=birth_date, salary=salary, company_id =company_id)
-                session.add(employee)
-                print(f"Successfully added: {name}")
-            if choice == 2:
-                 company_name = input("Enter company title: ")
-                 company_code = ''.join(random.choices(string.digits + string.ascii_uppercase, k=9))
-                 industry = input("Enter Industry title: ")
-                 description = input("Enter Company description:")
-                 address = input("Enter Company Address: ")
-                 company = Company(company_name=company_name, company_code=company_code, industry=industry, description= description, address = address )
-                 session.add(company)
-            if choice == 3:
-                pos_title = input("Enter position title: ")
-                position_desc = input("Enter position description: ")
-                pos_responsibilities = input("Enter position responsibilities: ")
-                pos_requirements = input("Enter position requirements: ")
-                pos_level = int(input("Enter level: "))
-                position = Position(title=pos_title, description=position_desc, responsibilities=pos_responsibilities, requirements=pos_requirements, level = pos_level)
-                session.add(position)
-            if choice == 4:
+            name = input("Enter employee name: ")
+            if name == "q":
                 break
-            session.commit()
+            surname = input("Enter employee surname: ")
+            try:
+                birth_date= input("Enter birth date(xxxx/xx/xx): ")
+                parsed_birth_date = dt.datetime.strptime(birth_date, "%Y-%m-%d")
+            except ValueError as e:
+                print(f"Error: {e}")
+                continue
+            salary = float(input("Enter employee Salary(x...x.xx): "))
+            company_id = int(input("Enter company ID: "))
+            company = session.get(Company, company_id)
+            
+            if not company:
+                print("Invalid company ID. Please try again.")
+                continue
 
+            employee = Employee(name=name, surname=surname, birth_date=parsed_birth_date, salary=salary, company_id =company_id)
+            session.add(employee)
+            print(f"Successfully added: {name}")            
+        session.commit()
     except Exception as e:
         print(f"Ivyko klada {e}")
 
@@ -156,10 +136,7 @@ def update_employees():
                 print("2. Surname")
                 print("3. Birth date")
                 print("4. Salary")
-                print("5. Company ID")
-                print("6. Start date")
-                print("7. Assign position")
-                print("8. Return")
+                print("5. Start date")
                 
               
                 try:
@@ -212,23 +189,10 @@ def update_employees():
                     except ValueError:
                         print("Invalid salary format. Enter a number.")
                         continue
-                        
+                # Iskelti darbuotojo darbovietes antaujinima per kompanijos service faila dar neigivendinta
+                # Taip pat su pozicija atnaujinti per pozicijos service faila dar neigyvendinta 
+
                 elif selected_column == 5:
-                    try:
-                        company_id_input = input("Enter new company ID: ")
-                        company_id = int(company_id_input)
-                        company = session.get(Company, company_id)
-                        if company:
-                            selected_employee.company_id = company_id
-                            print(f"Employee assigned to new company: {company.company_name}")
-                        else:
-                            print("Company with this ID not found.")
-                            continue
-                    except ValueError:
-                        print("Invalid company ID format. Enter a number.")
-                        continue
-                        
-                elif selected_column == 6:
                     try:
                         start_date = input("Enter new start date (yyyy-mm-dd): ")
                         parsed_date = dt.datetime.strptime(start_date, "%Y-%m-%d")
@@ -237,36 +201,6 @@ def update_employees():
                     except ValueError:
                         print("Invalid date format. Use yyyy-mm-dd format.")
                         continue
-                        
-                elif selected_column == 7:
-                    try:
-                        position_id_input = input("Enter position ID: ")
-                        position_id = int(position_id_input)
-                        position = session.get(Position, position_id)
-                        if position:
-                            # Check if employee already has this position
-                            has_position = False
-                            for pos in selected_employee.positions:
-                                if pos.position_id == position_id:
-                                    has_position = True
-                                    break
-                            
-                            if has_position:
-                                print(f"Employee already has this position: {position.title}")
-                            else:
-                                selected_employee.positions.append(position)
-                                print(f"Position '{position.title}' successfully assigned to employee.")
-                        else:
-                            print("Position with this ID not found.")
-                            continue
-                    except ValueError:
-                        print("Invalid position ID format. Enter a number.")
-                        continue
-                        
-                elif selected_column == 8:
-                    print("Returning to employee list...")
-                    break
-                
             
                 session.commit()
                 
@@ -280,7 +214,6 @@ def update_employees():
 # update_employees()
 
 def delete_user_data():
-    displayEmployees()
     session = getSession()
     try:
         while True:

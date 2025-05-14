@@ -10,11 +10,6 @@ from models.company import Company
 # == Importuoti lenteles ...
 
 engine = create_engine("mysql://root:Pqj]a,(2g}pysMK@localhost:3306/paskaitasqlalch")
-
-
-def createDataBase():
-    Base.metadata.create_all(engine)
-
 def getSession():
     Session = sessionmaker(bind=engine)
     return Session()
