@@ -178,7 +178,6 @@ __init__.py
 imone.py
 main.py
 uzduotis.py
-alembic.ini
 Uzrasai/Uzrasai.txt
 Uzrasai/Uzrasai13.txt
 utils/companies_generator.py
